@@ -298,12 +298,21 @@
   shell: "{{ home_dir }}/moretools.sh"
   become: true
 
-- name: Set DISPLAY value for x-server
+- name: Set DISPLAY value for x-server - windows/linux
   lineinfile:
     path: "{{ home_dir }}/.bashrc"
     insertafter: EOF
     line: 'export DISPLAY="10.0.2.2:0.0"'
     state: present
+  when: not is_macos
+
+- name: Set DISPLAY value for x-server - macos
+  lineinfile:
+    path: "{{ home_dir }}/.bashrc"
+    insertafter: EOF
+    line: 'export DISPLAY="localhost:10.0"'
+    state: present
+  when: is_macos
 
 - name: Source .bashrc file
   shell: "source {{ home_dir }}/.bashrc"

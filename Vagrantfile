@@ -84,7 +84,8 @@ Vagrant.configure("2") do |config|
     ansible.verbose = "v"
     ansible.playbook = "provisioning/setup_machine.yml"
     ansible.extra_vars = {
-      el_version: "#{el_version}"
+      el_version: "#{el_version}",
+      is_macos: if (/darwin/ =~ RUBY_PLATFORM) != nil; true else false end,
     }
   end
 end
