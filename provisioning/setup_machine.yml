@@ -3,6 +3,7 @@
   vars:
     home_dir: "/home/{{ ansible_user }}"
     el_version: "{{ lookup('env', 'EL_VERSION') | default('el8', True) }}"
+    copy_source: "{{ lookup('env', 'COPY_SOURCE') | default(true, True) | bool }}"
   roles:
     - environment
     - setupdb

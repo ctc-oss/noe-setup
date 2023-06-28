@@ -336,3 +336,27 @@
   command: touch /home/vagrant/nifi-toolkit-{{ nifi_version }}-bin.zip
   args:
     creates: /home/vagrant/nifi-toolkit-{{ nifi_version }}-bin.zip
+
+- name: Ensure {{ home_dir }}/source exists
+  file:
+    path: "{{ home_dir }}/source"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when: copy_source
+
+- name: Copy in pom.xml
+  copy:
+    src: "{{ role_path }}/../../../pom.xml"
+    dest: "{{ home_dir }}/source/pom.xml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when: copy_source
+
+- name: Copy in nifi_processors source
+  copy:
+    src: "{{ role_path }}/../../../nifi_processors"
+    dest: "{{ home_dir }}/source"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when: copy_source
