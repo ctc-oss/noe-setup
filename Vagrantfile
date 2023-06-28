@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
   os_arch = ENV['OS_ARCH'] || "x86_64"
   rocky_version = ENV['ROCKY_VERSION'] || "8"
   el_version = "el#{rocky_version}"
+  use_synced_folder = ENV['USE_SYNCED_FOLDER'] ? true : false
 
   # determine box to use based os arch and rocky version. arm/aarch only support on rocky9 not rocky8
   if (os_arch == "x86_64" ||  os_arch == "amd64") && rocky_version == "8" then
@@ -54,7 +55,10 @@ Vagrant.configure("2") do |config|
 
   # Setup options for virtualbox
   config.vm.provider "virtualbox" do |vb|
-    # config.vm.synced_folder ".", "/vagrant", type: "virtualbox" # seems to break stuff
+    if use_synced_folder then
+      config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+    end
+
     vb.name = "noe-open-rocky#{rocky_version}"
     vb.memory = "4096"
     vb.cpus = "2"
@@ -63,7 +67,10 @@ Vagrant.configure("2") do |config|
 
   # Setup options for parallels
   config.vm.provider "parallels" do |prl|
-    # config.vm.synced_folder ".", "/vagrant", type: "parallels" # seems to break stuff
+    if use_synced_folder then
+      config.vm.synced_folder ".", "/vagrant", type: "parallels"
+    end
+
     prl.name = "noe-open-rocky#{rocky_version}"
     prl.memory = "4096"
     prl.cpus = "2"
@@ -85,7 +92,8 @@ Vagrant.configure("2") do |config|
     ansible.playbook = "provisioning/setup_machine.yml"
     ansible.extra_vars = {
       el_version: "#{el_version}",
-      is_macos: if (/darwin/ =~ RUBY_PLATFORM) != nil; true else false end,
+      is_macos: (/darwin/ =~ RUBY_PLATFORM) != nil ? true : false,
+      copy_source: !use_synced_folder,
     }
   end
 end

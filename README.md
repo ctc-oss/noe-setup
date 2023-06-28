@@ -80,6 +80,8 @@ To build custom NiFi processors and install the newly built nar file
 
 ## Vagrant VMs
 
+**NOTE**: Some environments do not allow for the synced folder of a VM. So by default the source will be copied via ansible. However, if you wish to use the synced folder that before running any of the belows item set `USE_SYNCED_FOLDER=true`.
+
 - Rocky9 (arm/aarch supported)
 
   - Easy way
