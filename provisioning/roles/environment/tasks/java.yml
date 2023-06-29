@@ -1,0 +1,35 @@
+---
+- name: Install Java 17
+  dnf:
+    name:
+      - java-17-openjdk
+      - java-17-openjdk-devel
+  become: true
+
+- name: Set Java Version
+  shell: sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-17.0.7.0.7-3.{{ el_version }}.{{ ansible_architecture }}/bin/java
+  become: true
+
+- name: Set Java Compiler Version
+  shell: sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-17.0.7.0.7-3.{{ el_version }}.{{ ansible_architecture }}/bin/javac
+  become: true
+
+- name: Copy Java-home.sh 
+  copy:
+    src: "{{ role_path }}/files/java-home.sh"
+    dest: /etc/profile.d
+    mode: 0644
+    owner: root
+    group: root
+  become: true
+
+- name: Source Java Paths
+  shell: "source /etc/profile.d/java-home.sh"
+  become: true
+
+- name: Install Maven
+  dnf:
+    name:
+      - maven
+    state: latest
+  become: true

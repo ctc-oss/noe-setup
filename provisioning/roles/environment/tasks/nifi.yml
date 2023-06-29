@@ -1,0 +1,178 @@
+---
+- name: Add nifi group
+  become: true
+  group:
+    name: nifi
+    state: present
+
+- name: Add nifi user
+  become: true
+  user:
+    name: nifi
+    group: nifi
+    createhome: true
+
+- name: Create folder for latest version of NiFi
+  file:
+    path: /opt/nifi
+    state: directory
+    owner: nifi
+    group: nifi
+    mode: 0755
+  become: true
+
+- name: Create Folder for NiFi
+  file:
+    path: /opt/nifi/
+    state: directory
+    owner: nifi
+    group: nifi
+    mode: 0755
+    recurse: true
+  become: true
+
+# If online, will download from the url then unzip
+- name: Unzip Version {{ nifi_version }} of NiFi
+  unarchive:
+    src: "{{ nifi.url if not is_offline else nifi.path }}"
+    dest: /opt/nifi
+    mode: 0755
+    remote_src: "{{ true if not is_offline else false | bool }}"
+    group: nifi
+    owner: nifi
+  become: true
+
+# If online, will download from the url then unzip
+- name: Unzip NiFi Tools
+  unarchive:
+    src: "{{ nifi_tools.url if not is_offline else nifi_tools.path }}"
+    dest: /opt/nifi
+    mode: 0755
+    remote_src: "{{ true if not is_offline else false | bool }}"
+    group: nifi
+    owner: nifi
+  become: true
+
+- name: Create symlink from installed version of NiFi
+  file:
+    src: /opt/nifi/nifi-{{ nifi_version }}/
+    path: /opt/nifi-latest
+    state: link
+    owner: nifi
+    group: nifi
+  become: true
+
+- name: Copy NiFi service to Vagrant machine
+  copy:
+    src: "{{ role_path }}/files/nifi.service"
+    dest: /etc/systemd/system/
+    mode: 0755
+    owner: root
+  become: true
+
+- name: Create vagrant Downloads directory
+  file:
+    path: "{{ home_dir }}/Downloads"
+    state: directory
+    mode: 0755
+    owner: vagrant
+    group: vagrant
+  become: true
+  
+- name: Copy NiFi Template to Vagrant Downloads
+  copy:
+    src: "{{ role_path }}/files/Nifi-NOE-Final-Template.xml"
+    dest: "{{ home_dir }}/Downloads"
+    mode: 0666
+    owner: vagrant
+  become: true
+
+- name: Stop NiFi if running
+  systemd:
+    name: nifi
+    state: stopped
+  become: true
+
+- name: Create NiFi data directory
+  file:
+    path: "{{ item  }}"
+    state: directory
+    mode: 0755
+    owner: nifi
+    group: nifi
+  with_items:
+    - /home/nifi/data/in
+    - /home/nifi/data/out
+    - /home/nifi/data/hold
+    - /home/nifi/data/error
+    - /home/nifi/data/reports
+  become: true
+
+- name: Copy initial test files to Nifi hold diretory
+  copy:
+    src: "{{ item }}"
+    dest: /home/nifi/data/hold
+    owner: nifi
+    group: nifi
+    mode: 0755
+  with_items:
+    - "{{ role_path }}/files/some.txt"
+    - "{{ role_path }}/files/somemore.txt"
+    - "{{ role_path }}/files/evenmore.txt"
+  become: true
+
+- name: Copy mock script files to Nifi home
+  copy:
+    src: "{{ item }}"
+    dest: /home/nifi/
+    owner: nifi
+    group: nifi
+    mode: 0755
+  with_items:
+    - "{{ role_path }}/files/analyzer1.sh"
+    - "{{ role_path }}/files/analyzer2.sh"
+    - "{{ role_path }}/files/analyzer2.sh"
+    - "{{ role_path }}/files/sanitizer1.sh"
+    - "{{ role_path }}/files/sanitizer2.sh"
+    - "{{ role_path }}/files/sanitizer3.sh"
+    - "{{ role_path }}/files/setup-nifi-mock_env.sh"
+    - "{{ role_path }}/files/start-nifi-mock-processors.sh"
+    - "{{ role_path }}/files/stop-nifi-mock-processors.sh"
+  become: true
+
+- name: Copy siaft-processors nar file to NiFi directory 
+  copy:
+    src: "{{ role_path }}/files/siaft-processors.nar"
+    dest: /opt/nifi/nifi-{{ nifi_version }}/lib/
+    mode: 0755
+    owner: nifi
+    group: nifi
+  become: true
+
+- name: Download Version {{ mariadb_client_version }} of mariadb client - online
+  get_url:
+    url: https://dlm.mariadb.com/2912798/Connectors/java/connector-java-{{ mariadb_client_version }}/mariadb-java-client-{{ mariadb_client_version }}.jar
+    dest: /opt/nifi/nifi-{{ nifi_version }}/lib/mariadb-java-client-{{ mariadb_client_version }}.jar
+    owner: nifi
+    group: nifi
+    mode: 0755
+  become: true
+  when: not is_offline
+
+- name: Copy Version {{ mariadb_client_version }} of mariadb client - offline
+  copy:
+    src: "{{ role_path }}/../offline-download/files/offline-files/mariadb-java-client-{{ mariadb_client_version }}.jar"
+    dest: "/opt/nifi/nifi-{{ nifi_version }}/lib/mariadb-java-client-{{ mariadb_client_version }}.jar"
+    owner: nifi
+    group: nifi
+    mode: 0755
+  become: true
+  when: is_offline
+
+- name: Enable NiFi Service and Start NiFi
+  systemd:
+    daemon-reload: true
+    name: nifi
+    state: started
+    enabled: true
+  become: true

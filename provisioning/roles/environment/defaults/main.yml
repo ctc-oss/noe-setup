@@ -1,0 +1,12 @@
+---
+nifi:
+  url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-{{ nifi_version }}-bin.zip"
+  path: "{{ role_path }}/../offline-download/files/offline-files/nifi-{{ nifi_version }}-bin.zip"
+
+nifi_tools:
+  url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-toolkit-{{ nifi_version }}-bin.zip"
+  path: "{{ role_path }}/../offline-download/files/offline-files/nifi-toolkit-{{ nifi_version }}-bin.zip"
+
+maven_deps_path: "{{ role_path }}/../offline-download/files/offline-files/maven-deps.zip"
+
+offline_yum_repo_location: "{{ lookup('env', 'OFFLINE_YUM_REPO_LOCATION') | default('', True) }}"
