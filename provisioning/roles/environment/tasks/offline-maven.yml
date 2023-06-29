@@ -1,0 +1,15 @@
+---
+- name: Ensure {{ home_dir }}/.m2/repository exists
+  file:
+    path: "{{ home_dir }}/.m2/repository"
+    state: directory
+    recurse: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Extract maven deps into {{ home_dir }}/.m2/repository
+  unarchive:
+    src: "{{ maven_deps_path }}"
+    dest: "{{ home_dir }}/.m2/repository"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"

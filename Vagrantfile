@@ -94,6 +94,7 @@ Vagrant.configure("2") do |config|
       el_version: "#{el_version}",
       is_macos: (/darwin/ =~ RUBY_PLATFORM) != nil ? true : false,
       copy_source: !use_synced_folder,
+      is_offline: ENV['IS_OFFLINE'].to_s.downcase == "true" ? true : false
     }
   end
 end

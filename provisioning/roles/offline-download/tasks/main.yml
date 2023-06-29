@@ -1,0 +1,56 @@
+---
+- name: Ensure offline-files directory exists
+  file:
+    path: "{{ role_path }}/files/offline-files"
+    state: directory
+
+# Using docker is better because then the dependencies downloaded are using a matching OS (RHEL/ROCKY 8/9).
+# Use clean install instead of "dependency:go-offline" as "dependency:go-offline" doesn't get everything.
+- name: Download maven dependencies using docker
+  docker_container:
+    name: noe_setup_maven_deps_download
+    auto_remove: true
+    detach: false
+    # image seemed to work fine with both rocky8 and rocky9. usually rocky8/rhel8 will be used.
+    image: registry.access.redhat.com/ubi8/openjdk-17:1.16-1.1687182768
+    volumes:
+      - "{{ role_path }}/../../../:/app"
+    working_dir: /app
+    command: >-
+      mvn clean install
+        -Dmaven.test.skip=true
+        -Dmaven.repo.local=/app/provisioning/roles/offline-download/files/offline-files/maven-deps
+
+- name: Create zip of maven dependencies
+  archive:
+    path: "{{ role_path }}/files/offline-files/maven-deps/*"
+    dest: "{{ role_path }}/files/offline-files/maven-deps.zip"
+    format: zip
+
+# - name: Remove maven dependencies directory
+#   file:
+#     path: "{{ role_path }}/files/offline-files/maven-deps"
+#     state: absent
+
+- name: Download Version {{ nifi_version }} of NiFi
+  get_url:
+    url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-{{ nifi_version }}-bin.zip"
+    dest: "{{ role_path }}/files/offline-files/nifi-{{ nifi_version }}-bin.zip"
+    mode: 0755
+
+- name: Download NiFi Tools
+  get_url:
+    url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-toolkit-{{ nifi_version }}-bin.zip"
+    dest: "{{ role_path }}/files/offline-files/nifi-toolkit-{{ nifi_version }}-bin.zip"
+    mode: 0755
+
+- name: Download Version {{ mariadb_client_version }} of mariadb client
+  get_url:
+    url: "https://dlm.mariadb.com/2912798/Connectors/java/connector-java-{{ mariadb_client_version }}/mariadb-java-client-{{ mariadb_client_version }}.jar"
+    dest: "{{ role_path }}/files/offline-files/mariadb-java-client-{{ mariadb_client_version }}.jar"
+
+# - name: Create zip of offline-files
+#   archive:
+#     path: "{{ role_path }}/files/offline-files"
+#     dest: "{{ role_path }}/files/offline-files.zip"
+#     format: zip
