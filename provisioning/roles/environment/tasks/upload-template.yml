@@ -1,0 +1,37 @@
+---
+# NOTE: Not using the uri module for these items as it seemed to not
+# like using "localhost:8443" on hosts other than localhost.
+
+- name: Get NiFi access token
+  shell: |
+    curl -k \
+      -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+      --data 'username={{ nifi_username }}&password={{ nifi_password }}' \
+      --compressed \
+      https://localhost:8443/nifi-api/access/token
+  register: nifi_token_cmd
+
+- name: Set NiFi access token variable
+  set_fact:
+    nifi_access_token: "{{ nifi_token_cmd.stdout | replace('\n', '') }}"
+
+- name: Get process group information
+  shell: |
+    curl -k \
+      -H 'Authorization: Bearer {{ nifi_access_token }}' \
+      https://localhost:8443/nifi-api/process-groups/root
+  register: nifi_process_group_cmd
+
+- name: Set NiFi process group id
+  set_fact:
+    nifi_process_group_id: "{{ (nifi_process_group_cmd.stdout | from_json).id }}"
+
+- name: Upload NOE Template to NiFI
+  shell:
+    cmd: |
+      curl -k \
+        -F template=@Nifi-NOE-Final-Template.xml \
+        -X POST \
+        -H 'Authorization: Bearer {{ nifi_access_token }}' \
+        https://localhost:8443/nifi-api/process-groups/{{ nifi_process_group_id }}/templates/upload
+    chdir: "{{ home_dir }}/Downloads"

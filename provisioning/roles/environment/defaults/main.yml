@@ -2,6 +2,8 @@
 nifi:
   url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-{{ nifi_version }}-bin.zip"
   path: "{{ role_path }}/../offline-download/files/offline-files/nifi-{{ nifi_version }}-bin.zip"
+  username: "{{ lookup('env', 'NIFI_USERNAME') | default('', True) }}"
+  password: "{{ lookup('env', 'NIFI_PASSWORD') | default('', True) }}"
 
 nifi_tools:
   url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-toolkit-{{ nifi_version }}-bin.zip"
