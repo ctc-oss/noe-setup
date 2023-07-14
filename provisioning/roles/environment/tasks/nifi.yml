@@ -169,6 +169,16 @@
   become: true
   when: is_offline
 
+- name: Set Username and Password for NiFi - if specified
+  shell:
+    cmd: "./nifi.sh set-single-user-credentials {{ nifi.username }} {{ nifi.password }}"
+    chdir: /opt/nifi-latest/bin
+  become: true
+  when: >-
+    nifi.username != '' and
+    nifi.password != '' and
+    nifi.password | length >= 12
+
 - name: Enable NiFi Service and Start NiFi
   systemd:
     daemon-reload: true
@@ -176,3 +186,5 @@
     state: started
     enabled: true
   become: true
+
+- import_tasks: "./nifi-creds.yml"

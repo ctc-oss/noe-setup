@@ -1,0 +1,51 @@
+---
+- name: Get NiFi Generated Username
+  shell:
+    cmd: |
+      while ! grep "Username " nifi-app*.log > /dev/null; do sleep 1; done
+      grep "Username " nifi-app*.log | sed 's/.*\[//g' | sed 's/\]//'
+    chdir: /opt/nifi-latest/logs
+  register: nifi_username_cmd
+  when: >-
+    nifi.username == '' or
+    nifi.password == '' or
+    nifi.password | length < 12
+
+- name: Get NiFi Generated Password
+  shell:
+    cmd: |
+      while ! grep "Password " nifi-app*.log > /dev/null; do sleep 1; done
+      grep "Password " nifi-app*.log | sed 's/.*\[//g' | sed 's/\]//'
+    chdir: /opt/nifi-latest/logs
+  register: nifi_password_cmd
+  when: >-
+    nifi.username == '' or
+    nifi.password == '' or
+    nifi.password | length < 12
+
+- name: Set NiFi Username fact
+  set_fact:
+    nifi_username: >-
+      {{
+        nifi.username
+        if nifi.username != '' and nifi.password != '' and nifi.password | length >= 12
+        else nifi_username_cmd.stdout | replace('\n', '')
+      }}
+
+- name: Set NiFi Password fact
+  set_fact:
+    nifi_password: >-
+      {{
+        nifi.password
+        if nifi.username != '' and nifi.password != '' and nifi.password | length >= 12
+        else nifi_password_cmd.stdout | replace('\n', '')
+      }}
+
+- name: Save NiFi Username and Password to {{ home_dir }}/nifi-creds.txt
+  copy:
+    dest: "{{ home_dir }}/nifi-creds.txt"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    content: |
+      Username: [{{ nifi_username }}]
+      Password: [{{ nifi_password }}]

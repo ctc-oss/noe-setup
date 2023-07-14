@@ -119,3 +119,6 @@
 - name: Install maven dependencies - offline
   import_tasks: "./offline-maven.yml"
   when: is_offline
+
+- name: Upload NOE template to NiFi
+  import_tasks: "./upload-template.yml"

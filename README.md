@@ -19,13 +19,15 @@ Note: The custom nifi_processors source files will be in /home/vagrant/nifi_proc
 
 ## Manual NOE VM Steps to run and verify NiFi flow
 
-To build custom NiFi processors and install the newly built nar file
+To build custom NiFi processors and install the newly built nar file:
 
-- `cd /home/vagrant/source/nifi_processors`
-- run: `mvn clean install -Dmaven.test.skip=true`
-- `sudo cp /home/vagrant/source/nifi_processors/target/siaft-processors.nar /opt/nifi-latest/lib/`
-- `sudo chown nifi.nifi /opt/nifi-latest/lib/siaft-processors.nar`
-- `sudo systemctl restart nifi`
+```bash
+cd /home/vagrant/source/nifi_processors
+mvn clean install -Dmaven.test.skip=true
+sudo cp /home/vagrant/source/nifi_processors/target/siaft-processors.nar /opt/nifi-latest/lib/
+sudo chown nifi.nifi /opt/nifi-latest/lib/siaft-processors.nar
+sudo systemctl restart nifi
+```
 
 ---
 
@@ -46,13 +48,8 @@ To build custom NiFi processors and install the newly built nar file
 - `cat /home/vagrant/nifi-creds.txt`
 - login into NiFi with the credentials from cat results
 - save credentials in the popup screen
-- in the Operate Nifi Flow click the last icon to upload the template file
-- click select template
-- find the template file in the `/home/vagrant/Downloads` directory, highlight it, click open button
-- click the upload button
-- click OK to close the dialog box
 - click the and drag the template icon in the colored nifi menu to the nifi grid
-- click add to add the template that was uploaded
+- click add to add the `Nifi-NOE-Final-Template.xml` template
 - click a blank spot in the grid to un-highlight the processors and the relationships
 - right click a blank spot in the grid and choose enable all controller services in the popup menu
 - go back to the terminal window with root user in directory `/home/nifi`
@@ -78,89 +75,19 @@ To build custom NiFi processors and install the newly built nar file
 
 ---
 
-## Vagrant VMs
+## Setting NiFi Username and Password
 
-**NOTE**: Some environments do not allow for the synced folder of a VM. So by default the source will be copied via ansible. However, if you wish to use the synced folder that before running any of the belows item set `USE_SYNCED_FOLDER=true`.
+This playbook allows the user to provide the Username and Password for NiFi to use. To do this set environment variables:
 
-- Rocky9 (arm/aarch supported)
+- `NIFI_USERNAME`
+- `NIFI_PASSWORD` - Must be at least 12 characters
 
-  - Easy way
-
-    ```bash
-    ./vagrant.sh -a up -r "9" # default is rocky8
-    ```
-
-  - Manual way:
-
-    - Not arm/aarch platforms:
-
-      ```bash
-      export ROCKY_VERSION="9"
-      vagrant up
-      ```
-    
-    - arm/aarch platforms:
-
-      ```bash
-      export ROCKY_VERSION="9"
-      export OS_ARCH=arm64
-      vagrant up
-      ```
-
-- Rocky8 (not arm/aarch supported)
-
-  - Easy way:
-
-    ```bash
-    ./vagrant.sh -a up
-    ```
-
-  - Manual way:
-  
-    ```bash
-    vagrant up
-    ```
+If these aren't provided, or the password isn't at least 12 characters, the default process of using a random username and password is used.
 
 ---
-## Offliine Support
 
-### Downloading Files
+## Other Documentation
 
-To get all files needed for an offline deployment, the following software will need to installed on the local machine:
+[Vagrant VMs](docs/offline.md)
 
-- `ansible`
-- `docker`
-
-Once you have those installed, run:
-
-```bash
-ansible-playbook -v provisioning/offline_download.yml
-```
-
-This will download all the files needed to `provisioning/roles/offline-download/files/offline-files`. To move these over zip the folder and then extract in the SAME location on the offline machine. The other provisioning code will look inside of `provisioning/roles/offline-download/files/offline-files` when deploying offline so make sure the proper contents are there.
-
-### Deploying
-
-**NOTE**: This example is running the provisioning on a already made RHEL8/ROCKY8 or RHEL9/ROCKY9 machine. Since being offline, to be able to use `Vagrant` some additional steps would be needed that we are not going to look into at the moment.
-
-**Prereqs**:
-
-To deploy offline make sure:
-
-- Created a RHEL8/ROCKY8 or RHEL9/ROCKY9 VM with `ansible` installed.
-- The extracted content of the offline files are inside of `provisioning/roles/offline-download/files/offline-files`.
-- If wanting to use custom yum repos make sure to set the varaiable `OFFLINE_YUM_REPO_LOCATION`.
-  - When setting this variable append either `local:` or `remote:` to the beginning if providing a file path. This will help ensure if copying the file from one place to another that we know wheter its from the machine running the ansible or the machine being created.
-  - However, if this is a URL starting with `http` or `https` it will try downloading that file to the proper location.
-
-**Run provisioning**:
-
-- Update the `provisioning/setup_machine.yml` to set `- hosts: all` to `- hosts: localhost`.
-
-- Run:
-
-  ```bash
-  ansible-playbook \
-    --extra-vars is_offline=true \
-    provisioning/setup_machine.yml
-  ```
+[Offline Support](docs/offline.md)
