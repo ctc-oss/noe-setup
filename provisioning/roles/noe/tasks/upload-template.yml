@@ -2,6 +2,12 @@
 # NOTE: Not using the uri module for these items as it seemed to not
 # like using "localhost:8443" on hosts other than localhost.
 
+- name: Wait for NiFi endpoint to be up
+  shell: |
+    until $(curl -k -o /dev/null -s --head -f https://localhost:8443/nifi); do
+      sleep 1
+    done
+
 - name: Get NiFi access token
   shell: |
     curl -k \

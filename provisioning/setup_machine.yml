@@ -6,4 +6,6 @@
     copy_source: "{{ lookup('env', 'COPY_SOURCE') | default(true, True) | bool }}"
   roles:
     - environment
-    - setupdb
+    - nifi
+    - noe
+    - mariadb

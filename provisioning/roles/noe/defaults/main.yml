@@ -1,0 +1,2 @@
+---
+maven_deps_path: "{{ role_path }}/../offline-download/files/offline-files/maven-deps.zip"

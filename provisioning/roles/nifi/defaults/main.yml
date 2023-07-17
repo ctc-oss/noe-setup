@@ -1,0 +1,6 @@
+---
+nifi_url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-{{ nifi.version }}-bin.zip"
+nifi_path: "{{ role_path }}/../offline-download/files/offline-files/nifi-{{ nifi.version }}-bin.zip"
+
+nifi_tools_url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-toolkit-{{ nifi.version }}-bin.zip"
+nifi_tools_path: "{{ role_path }}/../offline-download/files/offline-files/nifi-toolkit-{{ nifi.version }}-bin.zip"

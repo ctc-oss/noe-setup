@@ -1,4 +1,24 @@
 ---
+- name: Download Version {{ mariadb_client_version }} of mariadb client - online
+  get_url:
+    url: https://dlm.mariadb.com/2912798/Connectors/java/connector-java-{{ mariadb_client_version }}/mariadb-java-client-{{ mariadb_client_version }}.jar
+    dest: /opt/nifi/nifi-{{ nifi.version }}/lib/mariadb-java-client-{{ mariadb_client_version }}.jar
+    owner: nifi
+    group: nifi
+    mode: 0755
+  become: true
+  when: not is_offline
+
+- name: Copy Version {{ mariadb_client_version }} of mariadb client - offline
+  copy:
+    src: "{{ role_path }}/../offline-download/files/offline-files/mariadb-java-client-{{ mariadb_client_version }}.jar"
+    dest: "/opt/nifi/nifi-{{ nifi.version }}/lib/mariadb-java-client-{{ mariadb_client_version }}.jar"
+    owner: nifi
+    group: nifi
+    mode: 0755
+  become: true
+  when: is_offline
+  
 - name: Install MariaDB
   dnf:
     name:

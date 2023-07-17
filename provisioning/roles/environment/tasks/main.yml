@@ -53,9 +53,6 @@
 - name: Configure Java
   import_tasks: "./java.yml"
 
-- name: Configure NiFi
-  import_tasks: "./nifi.yml"
-
 - name: Copy moretools Install Script
   copy:
     src: "{{ role_path }}/files/moretools.sh"
@@ -87,38 +84,3 @@
 
 - name: Source .bashrc file
   shell: "source {{ home_dir }}/.bashrc"
-
-- name: Ensure {{ home_dir }}/source exists
-  file:
-    path: "{{ home_dir }}/source"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-  when: copy_source
-
-- name: Copy in pom.xml
-  copy:
-    src: "{{ role_path }}/../../../pom.xml"
-    dest: "{{ home_dir }}/source/pom.xml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-  when: copy_source
-
-- name: Copy in nifi_processors source
-  copy:
-    src: "{{ role_path }}/../../../nifi_processors"
-    dest: "{{ home_dir }}/source"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-  when: copy_source
-
-- name: Remove target from copied source if there
-  shell: "rm -rf {{ home_dir }}/source/nifi_processors/target || true"
-  when: copy_source
-
-- name: Install maven dependencies - offline
-  import_tasks: "./offline-maven.yml"
-  when: is_offline
-
-- name: Upload NOE template to NiFi
-  import_tasks: "./upload-template.yml"

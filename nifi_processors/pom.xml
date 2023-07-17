@@ -178,7 +178,7 @@
 						<include>**/*Test.java</include>
 					</includes>
 					<additionalClasspathElements>
-						<additionalClasspathElement>provisioning/roles/setupdb/files</additionalClasspathElement>
+						<additionalClasspathElement>provisioning/roles/mariadb/files</additionalClasspathElement>
 					</additionalClasspathElements>
 					<excludedGroups>com.nteligen.hq.dhs.siaft.IntegrationTests</excludedGroups>
 				</configuration>
