@@ -32,16 +32,16 @@
 #     path: "{{ role_path }}/files/offline-files/maven-deps"
 #     state: absent
 
-- name: Download Version {{ nifi_version }} of NiFi
+- name: Download Version {{ nifi.version }} of NiFi
   get_url:
-    url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-{{ nifi_version }}-bin.zip"
-    dest: "{{ role_path }}/files/offline-files/nifi-{{ nifi_version }}-bin.zip"
+    url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-{{ nifi.version }}-bin.zip"
+    dest: "{{ role_path }}/files/offline-files/nifi-{{ nifi.version }}-bin.zip"
     mode: 0755
 
 - name: Download NiFi Tools
   get_url:
-    url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-toolkit-{{ nifi_version }}-bin.zip"
-    dest: "{{ role_path }}/files/offline-files/nifi-toolkit-{{ nifi_version }}-bin.zip"
+    url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-toolkit-{{ nifi.version }}-bin.zip"
+    dest: "{{ role_path }}/files/offline-files/nifi-toolkit-{{ nifi.version }}-bin.zip"
     mode: 0755
 
 - name: Download Version {{ mariadb_client_version }} of mariadb client

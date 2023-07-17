@@ -1,0 +1,112 @@
+---
+- name: Add nifi group
+  become: true
+  group:
+    name: nifi
+    state: present
+
+- name: Add nifi user
+  become: true
+  user:
+    name: nifi
+    group: nifi
+    createhome: true
+
+- name: Create folder for latest version of NiFi
+  file:
+    path: /opt/nifi
+    state: directory
+    owner: nifi
+    group: nifi
+    mode: 0755
+  become: true
+
+- name: Create Folder for NiFi
+  file:
+    path: /opt/nifi/
+    state: directory
+    owner: nifi
+    group: nifi
+    mode: 0755
+    recurse: true
+  become: true
+
+# If online, will download from the url then unzip
+- name: Unzip Version {{ nifi.version }} of NiFi
+  unarchive:
+    src: "{{ nifi_url if not is_offline else nifi_path }}"
+    dest: /opt/nifi
+    mode: 0755
+    remote_src: "{{ true if not is_offline else false | bool }}"
+    group: nifi
+    owner: nifi
+  become: true
+
+# If online, will download from the url then unzip
+- name: Unzip NiFi Tools
+  unarchive:
+    src: "{{ nifi_tools_url if not is_offline else nifi_tools_path }}"
+    dest: /opt/nifi
+    mode: 0755
+    remote_src: "{{ true if not is_offline else false | bool }}"
+    group: nifi
+    owner: nifi
+  become: true
+
+- name: Create symlink from installed version of NiFi
+  file:
+    src: /opt/nifi/nifi-{{ nifi.version }}/
+    path: /opt/nifi-latest
+    state: link
+    owner: nifi
+    group: nifi
+  become: true
+
+- name: Copy NiFi service to Vagrant machine
+  copy:
+    src: "{{ role_path }}/files/nifi.service"
+    dest: /etc/systemd/system/
+    mode: 0755
+    owner: root
+  become: true
+
+- name: Stop NiFi if running
+  systemd:
+    name: nifi
+    state: stopped
+  become: true
+
+- name: Create NiFi data directory
+  file:
+    path: "{{ item  }}"
+    state: directory
+    mode: 0755
+    owner: nifi
+    group: nifi
+  with_items:
+    - /home/nifi/data/in
+    - /home/nifi/data/out
+    - /home/nifi/data/hold
+    - /home/nifi/data/error
+    - /home/nifi/data/reports
+  become: true
+
+- name: Set Username and Password for NiFi - if specified
+  shell:
+    cmd: "./nifi.sh set-single-user-credentials {{ nifi.username }} {{ nifi.password }}"
+    chdir: /opt/nifi-latest/bin
+  become: true
+  when: >-
+    nifi.username != '' and
+    nifi.password != '' and
+    nifi.password | length >= 12
+
+- name: Enable NiFi Service and Start NiFi
+  systemd:
+    daemon-reload: true
+    name: nifi
+    state: started
+    enabled: true
+  become: true
+  register: nifi_service_details
+  until: nifi_service_details.status.ActiveState == "active"

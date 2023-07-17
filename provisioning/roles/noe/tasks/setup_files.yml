@@ -1,0 +1,74 @@
+---
+- name: Stop NiFi if running
+  systemd:
+    name: nifi
+    state: stopped
+  become: true
+
+- name: Create vagrant Downloads directory
+  file:
+    path: "{{ home_dir }}/Downloads"
+    state: directory
+    mode: 0755
+    owner: vagrant
+    group: vagrant
+  become: true
+  
+- name: Copy NiFi Template to Vagrant Downloads
+  copy:
+    src: "{{ role_path }}/files/Nifi-NOE-Final-Template.xml"
+    dest: "{{ home_dir }}/Downloads"
+    mode: 0666
+    owner: vagrant
+  become: true
+
+- name: Copy initial test files to Nifi hold diretory
+  copy:
+    src: "{{ item }}"
+    dest: /home/nifi/data/hold
+    owner: nifi
+    group: nifi
+    mode: 0755
+  with_items:
+    - "{{ role_path }}/files/some.txt"
+    - "{{ role_path }}/files/somemore.txt"
+    - "{{ role_path }}/files/evenmore.txt"
+  become: true
+
+- name: Copy mock script files to Nifi home
+  copy:
+    src: "{{ item }}"
+    dest: /home/nifi/
+    owner: nifi
+    group: nifi
+    mode: 0755
+  with_items:
+    - "{{ role_path }}/files/analyzer1.sh"
+    - "{{ role_path }}/files/analyzer2.sh"
+    - "{{ role_path }}/files/analyzer2.sh"
+    - "{{ role_path }}/files/sanitizer1.sh"
+    - "{{ role_path }}/files/sanitizer2.sh"
+    - "{{ role_path }}/files/sanitizer3.sh"
+    - "{{ role_path }}/files/setup-nifi-mock_env.sh"
+    - "{{ role_path }}/files/start-nifi-mock-processors.sh"
+    - "{{ role_path }}/files/stop-nifi-mock-processors.sh"
+  become: true
+
+- name: Copy siaft-processors nar file to NiFi directory 
+  copy:
+    src: "{{ role_path }}/files/siaft-processors.nar"
+    dest: /opt/nifi/nifi-{{ nifi.version }}/lib/
+    mode: 0755
+    owner: nifi
+    group: nifi
+  become: true
+
+- name: Enable NiFi Service and Start NiFi
+  systemd:
+    daemon-reload: true
+    name: nifi
+    state: restarted
+    enabled: true
+  become: true
+  register: nifi_service_details
+  until: nifi_service_details.status.ActiveState == "active"
