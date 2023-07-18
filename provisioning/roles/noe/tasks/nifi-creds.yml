@@ -41,11 +41,12 @@
         else nifi_password_cmd.stdout | replace('\n', '')
       }}
 
-- name: Save NiFi Username and Password to {{ home_dir }}/nifi-creds.txt
+- name: Save NiFi Username and Password to ~/nifi-creds.txt
   copy:
     dest: "{{ home_dir }}/nifi-creds.txt"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    mode: 0755
     content: |
       Username: [{{ nifi_username }}]
       Password: [{{ nifi_password }}]

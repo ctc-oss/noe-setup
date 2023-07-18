@@ -3,6 +3,7 @@
   file:
     path: "{{ role_path }}/files/offline-files"
     state: directory
+    mode: 0755
 
 # Using docker is better because then the dependencies downloaded are using a matching OS (RHEL/ROCKY 8/9).
 # Use clean install instead of "dependency:go-offline" as "dependency:go-offline" doesn't get everything.
@@ -26,13 +27,14 @@
     path: "{{ role_path }}/files/offline-files/maven-deps/*"
     dest: "{{ role_path }}/files/offline-files/maven-deps.zip"
     format: zip
+    mode: 0755
 
 # - name: Remove maven dependencies directory
 #   file:
 #     path: "{{ role_path }}/files/offline-files/maven-deps"
 #     state: absent
 
-- name: Download Version {{ nifi.version }} of NiFi
+- name: Download NiFi Version {{ nifi.version }}
   get_url:
     url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-{{ nifi.version }}-bin.zip"
     dest: "{{ role_path }}/files/offline-files/nifi-{{ nifi.version }}-bin.zip"
@@ -44,10 +46,11 @@
     dest: "{{ role_path }}/files/offline-files/nifi-toolkit-{{ nifi.version }}-bin.zip"
     mode: 0755
 
-- name: Download Version {{ mariadb_client_version }} of mariadb client
+- name: Download Version mariadb client {{ mariadb_client_version }}
   get_url:
     url: "https://dlm.mariadb.com/2912798/Connectors/java/connector-java-{{ mariadb_client_version }}/mariadb-java-client-{{ mariadb_client_version }}.jar"
     dest: "{{ role_path }}/files/offline-files/mariadb-java-client-{{ mariadb_client_version }}.jar"
+    mode: 0755
 
 # - name: Create zip of offline-files
 #   archive:

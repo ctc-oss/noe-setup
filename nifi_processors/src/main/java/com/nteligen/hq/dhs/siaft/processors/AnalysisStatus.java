@@ -6,29 +6,31 @@ package com.nteligen.hq.dhs.siaft.processors;
  */
 public enum AnalysisStatus
 {
-    /**
-     * This represents that the analysis engine process succeeded and a report was generated.
-     */
-    ANALYSIS_SUCCESS("analyzed"),
-    /**
-     * This represents that the analysis engnine did not produce an analysis report.
-     */
-    NOT_PROCESSED("not processed"),
-    /**
-     * This represents that the nifi analysis process failed.
-     */
-    ANALYSIS_FAILURE("false");
+  /**
+   * This represents that the analysis engine process succeeded and a report was generated.
+   */
+  ANALYSIS_SUCCESS("analyzed"),
 
-    private String value;
+  /**
+   * This represents that the analysis engnine did not produce an analysis report.
+   */
+  NOT_PROCESSED("not processed"),
 
-    AnalysisStatus(String value)
-    {
-        this.value = value;
-    }
+  /**
+   * This represents that the nifi analysis process failed.
+   */
+  ANALYSIS_FAILURE("false");
 
-    @Override
-    public String toString()
-    {
-        return value;
-    }
+  private String value;
+
+  AnalysisStatus(String value)
+  {
+    this.value = value;
+  }
+
+  @Override
+  public String toString()
+  {
+    return value;
+  }
 }

@@ -10,7 +10,8 @@
     dest: /etc/yum.repos.d/
     owner: root
     group: root
-    force: true # always download to make sure its enabled
+    force: true  # always download to make sure its enabled
+    mode: 0755
   become: true
   when: >-
     is_offline
@@ -26,7 +27,8 @@
     owner: root
     group: root
     remote_src: "{{ true if offline_yum_repo_location is regex('^remote:.*') else false | bool }}"
-    force: true # always copy to make sure its enabled
+    force: true  # always copy to make sure its enabled
+    mode: 0755
   become: true
   when: >-
     is_offline

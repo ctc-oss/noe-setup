@@ -1,0 +1,17 @@
+---
+enable_list:
+  - yaml
+
+warn_list:
+  - command-instead-of-module
+  - command-instead-of-shell
+
+skip_list:
+  - no-changed-when
+  - experimental
+  - risky-shell-pipe
+  - package-latest
+  - fqcn
+
+exclude_paths:
+  - .github

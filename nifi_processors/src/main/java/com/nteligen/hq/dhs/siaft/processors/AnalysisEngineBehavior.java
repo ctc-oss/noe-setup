@@ -4,7 +4,10 @@ import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.util.StandardValidators;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class AnalysisEngineBehavior implements SIAFTBehaviorRetrievable
 {
