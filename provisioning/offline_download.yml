@@ -1,4 +1,5 @@
 ---
-- hosts: localhost
+- name: Download packages for offline deployment
+  hosts: localhost
   roles:
     - offline-download

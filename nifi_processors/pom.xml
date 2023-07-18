@@ -215,7 +215,7 @@
 							<configLocation>src/main/resources/checkstyle.xml</configLocation>
 							<encoding>UTF-8</encoding>
 							<consoleOutput>true</consoleOutput>
-							<failsOnError>false</failsOnError>
+							<failsOnError>true</failsOnError>
 							<includeTestSourceDirectory>true</includeTestSourceDirectory>
 							<linkXRef>false</linkXRef>
 						</configuration>

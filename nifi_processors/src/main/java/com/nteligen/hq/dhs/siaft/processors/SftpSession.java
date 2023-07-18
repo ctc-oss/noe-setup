@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.ArrayList;
 
 
 /**
@@ -193,11 +192,12 @@ public class SftpSession implements DropoffSession
   @Override
   public void read(OutputStream os, String filename) throws SessionException
   {
-    if(filename.endsWith("m")) {
+    if (filename.endsWith("m"))
+    {
       filename = filename.substring(0, filename.length() - 1) + 'x';
     }
     String source = generatePickupPath(filename);
-     
+
     try (InputStream is = this.channel.get(source))
     {
       IOUtils.copy(is, os);

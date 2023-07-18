@@ -14,7 +14,7 @@
   shell: sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-17.0.7.0.7-3.{{ el_version }}.{{ ansible_architecture }}/bin/javac
   become: true
 
-- name: Copy Java-home.sh 
+- name: Copy Java-home.sh
   copy:
     src: "{{ role_path }}/files/java-home.sh"
     dest: /etc/profile.d

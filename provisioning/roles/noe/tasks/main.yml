@@ -2,12 +2,13 @@
 - name: Setup NOE files
   import_tasks: "./setup_files.yml"
 
-- name: Ensure {{ home_dir }}/source exists
+- name: Ensure ~/source exists
   file:
     path: "{{ home_dir }}/source"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    mode: 0755
   when: copy_source
 
 - name: Copy in pom.xml
@@ -16,6 +17,7 @@
     dest: "{{ home_dir }}/source/pom.xml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    mode: 0755
   when: copy_source
 
 - name: Copy in nifi_processors source
@@ -24,6 +26,7 @@
     dest: "{{ home_dir }}/source"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    mode: 0755
   when: copy_source
 
 - name: Remove target from copied source if there

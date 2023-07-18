@@ -13,7 +13,7 @@
     owner: vagrant
     group: vagrant
   become: true
-  
+
 - name: Copy NiFi Template to Vagrant Downloads
   copy:
     src: "{{ role_path }}/files/Nifi-NOE-Final-Template.xml"
@@ -54,7 +54,7 @@
     - "{{ role_path }}/files/stop-nifi-mock-processors.sh"
   become: true
 
-- name: Copy siaft-processors nar file to NiFi directory 
+- name: Copy siaft-processors nar file to NiFi directory
   copy:
     src: "{{ role_path }}/files/siaft-processors.nar"
     dest: /opt/nifi/nifi-{{ nifi.version }}/lib/

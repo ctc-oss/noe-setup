@@ -32,7 +32,7 @@
   become: true
 
 # If online, will download from the url then unzip
-- name: Unzip Version {{ nifi.version }} of NiFi
+- name: Unzip NiFi Version {{ nifi.version }}
   unarchive:
     src: "{{ nifi_url if not is_offline else nifi_path }}"
     dest: /opt/nifi
@@ -78,7 +78,7 @@
 
 - name: Create NiFi data directory
   file:
-    path: "{{ item  }}"
+    path: "{{ item }}"
     state: directory
     mode: 0755
     owner: nifi
