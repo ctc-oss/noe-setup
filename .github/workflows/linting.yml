@@ -35,3 +35,29 @@ jobs:
 
       - name: ansible & yaml lint
         run: python3 -m ansiblelint provisioning
+
+  packer-lint:
+    name: Packer Lint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-packer@main
+
+      - name: Lint main packer
+        run: packer fmt -check .
+        working-directory: packer
+
+      - name: Lint os_pkrvars
+        run: packer fmt -check os_pkrvars/*
+        working-directory: packer
+
+  terraform-lint:
+    name: Terraform Lint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+
+      - name: Lint
+        run: terraform fmt -check **/*.{tf,tfvars}
+        working-directory: terraform

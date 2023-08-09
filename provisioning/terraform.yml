@@ -1,12 +1,9 @@
 ---
-- name: Run full setup
+- name: Setup NOE
   hosts: all
   vars:
     home_dir: "{{ '/home/' ~ ansible_user if ansible_user != 'root' else '/root' }}"
     el_version: "{{ lookup('env', 'EL_VERSION') | default('el8', True) }}"
     copy_source: "{{ lookup('env', 'COPY_SOURCE') | default(true, True) | bool }}"
   roles:
-    - environment
-    - nifi
     - noe
-    - mariadb

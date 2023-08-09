@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<nifi.version>1.21.0</nifi.version>
+		<nifi.version>1.23.0</nifi.version>
 		<powermock.version>1.7.1</powermock.version>
 	</properties>
 

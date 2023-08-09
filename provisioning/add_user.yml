@@ -1,0 +1,22 @@
+---
+- name: Add user to machine/vm
+  hosts: all
+  vars:
+    user_to_add_name: "{{ lookup('env', 'USER_TO_ADD_NAME') | default('developer', True) }}"
+    user_to_add_password: "{{ lookup('env', 'USER_TO_ADD_PASSWORD') | default('developerPass123!', True) }}"
+  tasks:
+    - name: Add user {{ user_to_add_name }}
+      user:
+        name: "{{ user_to_add_name }}"
+        password: "{{ user_to_add_password | password_hash('sha512') }}"
+        groups: "nifi,wheel"
+      become: true
+
+    - name: Enable passwordless sudo for {{ user_to_add_name }}
+      copy:
+        dest: "/etc/sudoers.d/{{ user_to_add_name }}"
+        content: |
+          Defaults:{{ user_to_add_name }} !requiretty
+          %{{ user_to_add_name }} ALL=(ALL) NOPASSWD: ALL
+        mode: 0440
+      become: true
