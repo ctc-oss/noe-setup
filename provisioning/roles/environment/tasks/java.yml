@@ -6,12 +6,17 @@
       - java-17-openjdk-devel
   become: true
 
+- name: Get Java Version
+  shell: |
+    echo /usr/lib/jvm/java-17-openjdk-*.{{ el_version }}.{{ ansible_architecture }} | sed 's|/usr/lib/jvm/||'
+  register: java_version_cmd
+
 - name: Set Java Version
-  shell: sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-17.0.7.0.7-3.{{ el_version }}.{{ ansible_architecture }}/bin/java
+  shell: sudo update-alternatives --set java /usr/lib/jvm/{{ java_version_cmd.stdout }}/bin/java
   become: true
 
 - name: Set Java Compiler Version
-  shell: sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-17.0.7.0.7-3.{{ el_version }}.{{ ansible_architecture }}/bin/javac
+  shell: sudo update-alternatives --set javac /usr/lib/jvm/{{ java_version_cmd.stdout }}/bin/javac
   become: true
 
 - name: Copy Java-home.sh

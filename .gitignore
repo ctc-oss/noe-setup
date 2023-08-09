@@ -1,3 +1,11 @@
 **/.vagrant
 *.class
 **/target
+
+# ignore packer builds
+packer/builds
+
+# ignore terraform files
+**/.terraform
+**/*.tfstate*
+**/*.terraform.lock.hcl

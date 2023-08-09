@@ -1,6 +1,6 @@
 ---
-- name: Run full setup
-  hosts: all
+- name: Setup env, nifi and mariadb
+  hosts: default
   vars:
     home_dir: "{{ '/home/' ~ ansible_user if ansible_user != 'root' else '/root' }}"
     el_version: "{{ lookup('env', 'EL_VERSION') | default('el8', True) }}"
@@ -8,5 +8,4 @@
   roles:
     - environment
     - nifi
-    - noe
     - mariadb

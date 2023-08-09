@@ -5,21 +5,21 @@
     state: stopped
   become: true
 
-- name: Create vagrant Downloads directory
+- name: Create Downloads directory
   file:
     path: "{{ home_dir }}/Downloads"
     state: directory
     mode: 0755
-    owner: vagrant
-    group: vagrant
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   become: true
 
-- name: Copy NiFi Template to Vagrant Downloads
+- name: Copy NiFi Template to Downloads
   copy:
     src: "{{ role_path }}/files/Nifi-NOE-Final-Template.xml"
     dest: "{{ home_dir }}/Downloads"
     mode: 0666
-    owner: vagrant
+    owner: "{{ ansible_user }}"
   become: true
 
 - name: Copy initial test files to Nifi hold diretory
@@ -67,7 +67,7 @@
   systemd:
     daemon-reload: true
     name: nifi
-    state: restarted
+    state: started
     enabled: true
   become: true
   register: nifi_service_details

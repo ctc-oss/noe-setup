@@ -91,3 +91,9 @@ If these aren't provided, or the password isn't at least 12 characters, the defa
 [Vagrant VMs](docs/offline.md)
 
 [Offline Support](docs/offline.md)
+
+[Qemu Setup](docs/qemu.md)
+
+[Packer Docs](docs/packer.md)
+
+[Terraform Docs](docs/terraform.md)

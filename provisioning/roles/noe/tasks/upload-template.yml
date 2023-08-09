@@ -12,7 +12,7 @@
   shell: |
     curl -k \
       -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
-      --data 'username={{ nifi_username }}&password={{ nifi_password }}' \
+      --data 'username={{ nifi_username | urlencode }}&password={{ nifi_password | urlencode }}' \
       --compressed \
       https://localhost:8443/nifi-api/access/token
   register: nifi_token_cmd
