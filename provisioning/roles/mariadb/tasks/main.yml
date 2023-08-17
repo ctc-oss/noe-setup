@@ -27,11 +27,16 @@
     disable_gpg_check: true
   become: true
 
-- name: Enable Servics and Start MariaDB
-  systemd:
-    daemon-reload: true
+- name: Reload MariaDB
+  ansible.builtin.systemd:
     name: mariadb
-    state: started
+    daemon-reload: true
+  become: true
+
+- name: Enable and Start Service
+  ansible.builtin.systemd:
+    state: restarted
+    name: mariadb
     enabled: true
   become: true
 
