@@ -32,13 +32,6 @@
   become: true
 
 # If online, will download from the url then unzip
-- name: Check NiFi already unzipped
-  shell: |
-    [[ -d /opt/nifi/nifi-{{ nifi.version }} ]] \
-    && echo "true" \
-    || echo "false"
-  register: nifi_extracted_cmd
-
 - name: Unzip NiFi Version {{ nifi.version }}
   unarchive:
     src: "{{ nifi_url if not is_offline else nifi_path }}"
@@ -47,7 +40,7 @@
     remote_src: "{{ true if not is_offline else false | bool }}"
     group: nifi
     owner: nifi
-  when: not nifi_extracted_cmd.stdout | bool
+    creates: "/opt/nifi/nifi-{{ nifi.version }}"
   become: true
 
 # If online, will download from the url then unzip
@@ -59,6 +52,7 @@
     remote_src: "{{ true if not is_offline else false | bool }}"
     group: nifi
     owner: nifi
+    creates: "/opt/nifi/nifi-toolkit-{{ nifi.version }}"
   become: true
 
 - name: Create symlink from installed version of NiFi

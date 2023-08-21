@@ -2,7 +2,7 @@ cdrom
 lang en_US.UTF-8
 keyboard us
 text
-network --bootproto=dhcp --noipv6 --onboot=on --device=eth0
+network --bootproto=${var.bootproto} --noipv6 --onboot=on --device=eth0
 rootpw --plaintext ${vm_root_password}
 firewall --enable --ssh
 selinux --disabled
@@ -35,4 +35,8 @@ network-scripts
 -intltool
 -iwl*-firmware
 -microcode_ctl
+%end
+
+%post
+sed -ie 's|.*PermitRootLogin\sno|PermitRootLogin yes|' /etc/ssh/sshd_config
 %end

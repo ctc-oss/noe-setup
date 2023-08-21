@@ -79,12 +79,12 @@ variable "vm_static_ip" {
 
 # user to add
 variable "user_to_add_name" {
-  type = string
-  default = "developer"
+  type        = string
+  default     = "developer"
   description = "Username for the user to add"
 }
 variable "user_to_add_password" {
-  type = string
-  default = "devPass123!"
+  type        = string
+  default     = "devPass123!"
   description = "Password for the user to add"
 }

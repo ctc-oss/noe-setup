@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source env.sh
+
 OS_NAME="rocky"
 OS_VERSION="8"
 OS_ARCH="x86"
