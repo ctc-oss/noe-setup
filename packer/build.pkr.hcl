@@ -1,6 +1,7 @@
 build {
   sources = [
     "source.qemu.vm",
+    "source.vsphere-iso.vm"
   ]
 
   provisioner "ansible" {

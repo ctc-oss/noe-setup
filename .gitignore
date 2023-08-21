@@ -9,3 +9,6 @@ packer/builds
 **/.terraform
 **/*.tfstate*
 **/*.terraform.lock.hcl
+
+**/*.env*
+!.env.template

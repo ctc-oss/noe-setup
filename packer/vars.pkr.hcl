@@ -16,11 +16,75 @@ variable "os_arch" {
   description = "OS architecture type, x86_64 or aarch64"
 }
 
+# offline variables
+variable "is_offline" {
+  type        = bool
+  default     = false
+  description = "Deployment is offline"
+}
+
 # specifc qemu variables
 variable "qemu_kvm" {
   type        = bool
   default     = false
   description = "Use qemu-kvm instead of qemu-system (rhel)"
+}
+
+# specifc vsphere variables
+variable "convert_to_template" {
+  type        = bool
+  default     = true
+  description = "Convert VM to VM template"
+}
+variable "dns_server_list" {
+  type        = list
+  default     = []
+  description = "List of DNS servers to use"
+}
+variable "insecure_connection" {
+  type        = bool
+  default     = true
+  description = "Insecure vSphere connection"
+}
+variable "vsphere_cluster" {
+  type        = string
+  default     = ""
+  description = "vSphere cluster to use"
+}
+variable "vsphere_datacenter" {
+  type        = string
+  default     = ""
+  description = "vSphere datacenter to use"
+}
+variable "vsphere_datastore" {
+  type        = string
+  default     = "datastore1"
+  description = "vSphere datacenter to use"
+}
+variable "vsphere_host" {
+  type        = string
+  default     = ""
+  description = "vSphere host to use"
+}
+variable "vsphere_network" {
+  type        = string
+  default     = "VM Network"
+  description = "vSphere network to use"
+}
+variable "vsphere_password" {
+  type        = string
+  default     = ""
+  description = "vSphere user password to authenticate with"
+}
+variable "vsphere_server" {
+  type        = string
+  default     = ""
+  description = "vSphere server to connect to"
+}
+variable "vsphere_user" {
+  type        = string
+  default     = ""
+  description = "vSphere user to authenticate as"
 }
 
 # specific macos variables
@@ -53,6 +117,10 @@ variable "disk_size" {
 variable "headless" {
   type    = bool
   default = true
+}
+variable "ipv4_gateway" {
+  type    = string
+  default = null
 }
 variable "iso_checksum" {
   type        = string
@@ -91,4 +159,8 @@ variable "vm_root_password" {
 variable "vm_root_user" {
   type    = string
   default = "root"
+}
+variable "vm_static_ip" {
+  type    = string
+  default = null
 }
