@@ -2,7 +2,7 @@
 nifi:
   username: "{{ lookup('env', 'NIFI_USERNAME') | default('', True) }}"
   password: "{{ lookup('env', 'NIFI_PASSWORD') | default('', True) }}"
-  version: "{{ lookup('env', 'NIFI_VERSION') | default('1.23.0', True) }}"
+  version: "{{ lookup('env', 'NIFI_VERSION') | default('1.23.2', True) }}"
 
 mariadb_client_version: "{{ lookup('env', 'MARIADB_CLIENT_VERSION') | default('3.1.4', True) }}"
 is_macos: "{{ lookup('env', 'IS_MACOS') | default(false, True) | bool }}"

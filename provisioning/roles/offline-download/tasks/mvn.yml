@@ -1,0 +1,29 @@
+---
+# Using docker is better because then the dependencies downloaded are using a matching OS (RHEL/ROCKY 8/9).
+# Use clean install instead of "dependency:go-offline" as "dependency:go-offline" doesn't get everything.
+- name: Download maven dependencies using docker
+  docker_container:
+    name: noe_setup_maven_deps_download
+    auto_remove: true
+    detach: false
+    # image seemed to work fine with both rocky8 and rocky9. usually rocky8/rhel8 will be used.
+    image: registry.access.redhat.com/ubi8/openjdk-17:1.16-1.1687182768
+    volumes:
+      - "{{ role_path }}/../../../:/app"
+    working_dir: /app
+    command: >-
+      mvn clean install {{ mvn_proxy_args }}
+        -Dmaven.test.skip=true
+        -Dmaven.repo.local=/app/provisioning/roles/offline-download/files/offline-files/maven-deps
+
+- name: Create zip of maven dependencies
+  archive:
+    path: "{{ role_path }}/files/offline-files/maven-deps/*"
+    dest: "{{ role_path }}/files/offline-files/maven-deps.zip"
+    format: zip
+    mode: 0755
+
+- name: Remove maven dependencies directory
+  file:
+    path: "{{ role_path }}/files/offline-files/maven-deps"
+    state: absent

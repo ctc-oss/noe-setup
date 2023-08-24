@@ -1,0 +1,18 @@
+---
+proxy_protocol: "{{ lookup('env', 'PROXY_PROTOCOL') | default('http', True) }}"
+proxy_host: "{{ lookup('env', 'PROXY_HOST') | default('', True) }}"
+proxy_port: "{{ lookup('env', 'PROXY_PORT') | default('', True) }}"
+
+mvn_proxy_args: >-
+  {{
+    ''
+    if proxy_host == '' and proxy_port == ''
+    else '-Dhttp.proxyHost='~proxy_host~' -Dhttp.proxyPort='~proxy_port~' -Dhttps.proxyHost='~proxy_host~' -Dhttps.proxyPort='~proxy_port
+  }}
+
+pip_proxy_args: >-
+  {{
+    ''
+    if proxy_host == '' and proxy_port == ''
+    else '--proxy '~proxy_protocol~'://'~proxy_host~':'~proxy_port
+  }}
