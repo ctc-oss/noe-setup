@@ -1,0 +1,29 @@
+---
+- name: Download terraform binary
+  unarchive:
+    src: "https://releases.hashicorp.com/terraform/1.5.5/terraform_1.5.5_linux_amd64.zip"
+    dest: "{{ role_path }}/files/offline-files/bin"
+    remote_src: true
+
+- name: Download terraform providers using docker
+  docker_container:
+    name: noe_setup_terraform_providers_download
+    auto_remove: true
+    detach: false
+    image: golang:alpine
+    volumes:
+      - "{{ role_path }}/../../../:/app"
+    working_dir: /app
+    env:
+      http_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+      https_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+    command: |
+      /bin/sh -c 'apk --no-cache add git unzip && \
+        git clone --single-branch --branch=v0.15 --depth=1 https://github.com/hashicorp/terraform.git terraform_repo && \
+        cd terraform_repo && \
+        go build -o ../terraform-bundle ./tools/terraform-bundle && \
+        cd ../ && \
+        rm -rf terraform_repo && \
+        ./terraform-bundle package -os=linux -arch=amd64 /app/provisioning/roles/offline-download/files/terraform-bundle.hcl && \
+        mv terraform_* /app/provisioning/roles/offline-download/files/offline-files/terraform-providers.zip && \
+        rm -rf terraform-bundle terraform_repo'

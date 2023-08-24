@@ -1,0 +1,18 @@
+---
+- name: Download NiFi Version {{ nifi.version }}
+  get_url:
+    url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-{{ nifi.version }}-bin.zip"
+    dest: "{{ role_path }}/files/offline-files/nifi-{{ nifi.version }}-bin.zip"
+    mode: 0755
+  environment:
+    http_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+    https_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+
+- name: Download NiFi Tools
+  get_url:
+    url: "https://archive.apache.org/dist/nifi/{{ nifi.version }}/nifi-toolkit-{{ nifi.version }}-bin.zip"
+    dest: "{{ role_path }}/files/offline-files/nifi-toolkit-{{ nifi.version }}-bin.zip"
+    mode: 0755
+  environment:
+    http_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+    https_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"

@@ -1,0 +1,26 @@
+---
+- name: Download pip dependencies using docker
+  docker_container:
+    name: noe_setup_pip_packages_download
+    auto_remove: true
+    detach: false
+    image: python:3.6.8
+    volumes:
+      - "{{ role_path }}/../../../:/app"
+    working_dir: /app
+    command: >-
+      pip download {{ pip_proxy_args }}
+        --dest /app/provisioning/roles/offline-download/files/offline-files/pip-packages/
+        ansible flake8 black
+
+- name: Create zip of python pip packages
+  archive:
+    path: "{{ role_path }}/files/offline-files/pip-packages/*"
+    dest: "{{ role_path }}/files/offline-files/pip-packages.zip"
+    format: zip
+    mode: 0755
+
+- name: Remove python pip packages directory
+  file:
+    path: "{{ role_path }}/files/offline-files/pip-packages"
+    state: absent

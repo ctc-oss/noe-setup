@@ -1,2 +1,4 @@
 *
 !.gitignore
+!plugins.pkr.hcl
+!terraform-bundle.hcl

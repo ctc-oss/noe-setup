@@ -1,0 +1,25 @@
+---
+- name: Download packer binary
+  unarchive:
+    src: "https://releases.hashicorp.com/packer/1.9.4/packer_1.9.4_linux_amd64.zip"
+    dest: "{{ role_path }}/files/offline-files/bin"
+    remote_src: true
+
+- name: Download packer plugins using docker
+  docker_container:
+    name: noe_setup_packer_plugins_download
+    auto_remove: true
+    detach: false
+    image: hashicorp/packer:1.8.4
+    volumes:
+      - "{{ role_path }}/../../../:/app"
+    working_dir: /app
+    entrypoint: []
+    env:
+      http_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+      https_proxy: "{{ '' if proxy_host == '' or proxy_port == '' else proxy_protocol~'://'~proxy_host~':'~proxy_port }}"
+    command: |
+      /bin/sh -c 'apk --no-cache add zip && \
+        packer init /app/provisioning/roles/offline-download/files/plugins.pkr.hcl && \
+        cd /root/.config/packer && \
+        zip -r /app/provisioning/roles/offline-download/files/offline-files/packer-plugins.zip .'
